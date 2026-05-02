@@ -3,191 +3,218 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LUTEC PRO | Sistema Completo</title>
+    <title>LUTEC_PRO_SYSTEM_v13_LUCAS</title>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
-        :root { --glow: #00ff41; --teal: #008184; --dark: #0d0d0d; --card: #1a1a1a; }
-        body { margin: 0; font-family: 'Consolas', monospace; background: var(--dark); color: #e0e0e0; font-size: 14px; }
+        /* RESTAURACIÓN DE ESTILO ARDUINO IDE COMPLETO */
+        :root { --arduino-teal: #00979d; --arduino-blue: #006468; --bg: #e1e1e1; --terminal: #222; --border: #bbb; }
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); color: #333; line-height: 1.4; }
         
-        header { background: #006468; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--glow); position: sticky; top: 0; z-index: 1000; }
-        .container { padding: 15px; max-width: 1200px; margin: 0 auto; padding-bottom: 120px; }
+        header { background: var(--arduino-blue); color: white; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--arduino-teal); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .container { padding: 20px; max-width: 900px; margin: auto; }
 
-        /* TERMINAL IA */
-        .terminal { background: #000; border: 1px solid var(--teal); padding: 12px; border-radius: 5px; margin-bottom: 20px; }
-        input, select { background: #1e1e1e; border: 1px solid var(--teal); color: var(--glow); padding: 12px; width: 100%; border-radius: 4px; margin: 5px 0; font-family: inherit; box-sizing: border-box; }
-
-        /* SECCIONES RECUPERADAS */
-        .panel-info { background: #1a1a1a; border: 1px solid #333; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
-        .card { background: var(--card); border: 1px solid #333; padding: 12px; border-radius: 8px; position: relative; }
-        .p-img { width: 100%; height: 120px; object-fit: cover; border-radius: 4px; }
+        /* TERMINAL DE ESTADO */
+        .console { background: var(--terminal); color: #00ff41; padding: 15px; border-radius: 0 0 5px 5px; font-family: 'Consolas', 'Courier New', monospace; font-size: 13px; border-left: 5px solid var(--arduino-teal); margin-bottom: 15px; }
         
-        .btn { background: var(--teal); color: white; border: none; padding: 12px; cursor: pointer; font-weight: bold; width: 100%; border-radius: 4px; margin-top: 5px; }
-        .btn:active { background: var(--glow); color: #000; }
+        input, select { border: 1px solid var(--border); padding: 12px; width: 100%; box-sizing: border-box; margin: 10px 0; border-radius: 4px; font-size: 14px; }
+        input:focus { border-color: var(--arduino-teal); outline: none; }
 
-        /* FOOTER TÉCNICO */
-        footer { background: #050505; padding: 20px; border-top: 1px solid var(--teal); font-size: 11px; margin-top: 30px; }
+        /* GRILLA DE PRODUCTOS CON MÁS PESO VISUAL */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; margin-top: 20px; }
+        .card { background: white; border: 1px solid var(--border); padding: 15px; text-align: center; border-radius: 4px; transition: transform 0.1s; }
+        .card:hover { transform: scale(1.02); border-color: var(--arduino-teal); }
+        .p-img { width: 100%; height: 100px; object-fit: contain; margin-bottom: 10px; }
+        
+        .btn { background: var(--arduino-teal); color: white; border: none; padding: 12px; cursor: pointer; width: 100%; font-weight: bold; border-radius: 4px; text-transform: uppercase; font-size: 12px; }
+        .btn:hover { background: var(--arduino-blue); }
+        .btn-del { background: #cc3333; color: white; border: none; padding: 4px 8px; cursor: pointer; font-size: 11px; border-radius: 3px; }
+
+        /* SECCIÓN DE CARRITO Y DOCUMENTOS */
+        #cart-area { background: #fff; border: 1px solid var(--arduino-blue); padding: 25px; margin-top: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        #invoice { display: none; background: #fff; border: 2px solid #333; padding: 25px; margin-top: 20px; font-family: 'Courier New', monospace; color: #000; position: relative; }
+        #invoice::before { content: "DOCUMENTO OFICIAL"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); font-size: 40px; color: rgba(0,0,0,0.05); pointer-events: none; }
+
+        /* PANEL ADMINISTRADOR */
+        #admin-panel { display: none; background: #d5e8e8; border: 2px dashed var(--arduino-teal); padding: 20px; margin-bottom: 25px; border-radius: 8px; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo">> LUTEC_PRO_RECOV_v9</div>
-    <div style="font-size: 10px;">VISITAS: 128 | 02-05-2026</div>
+    <div><strong>LUTEC PRO</strong> | Lucas System v13.0</div>
+    <div id="user-display" style="font-size: 12px; background: rgba(0,0,0,0.2); padding: 5px 10px; border-radius: 3px;">Status: Offline</div>
 </header>
 
 <div class="container">
-    <!-- IA DE BÚSQUEDA -->
-    <div class="terminal">
-        <span style="color:var(--glow)">LUCAS_AI:~$</span>
-        <input type="text" id="ai-in" placeholder="¿Qué componente buscas?" onkeyup="runAI()">
-        <div id="ai-out" style="font-size: 11px; margin-top: 8px; color: #888;">IA ACTIVA: Esperando comandos...</div>
-    </div>
-
-    <!-- SEGUIMIENTO DE ENVÍO (FUNCIÓN DEVUELTA) -->
-    <div class="panel-info">
-        <h4 style="margin:0 0 10px 0; color:var(--glow)">[ 01_TRACKING_SYSTEM ]</h4>
-        <div style="display:flex; gap:10px;">
-            <input type="text" id="tr-id" placeholder="ID de envío (Ej: LT-99)">
-            <button class="btn" style="width:100px; margin:5px 0;" onclick="checkTrack()">VER</button>
-        </div>
-        <div id="track-res" style="font-size:12px; color:var(--glow); margin-top:10px;"></div>
-    </div>
-
-    <!-- LOGIN SEGURO (CONTROL DE CUENTAS) -->
-    <div id="login-zone" style="text-align: center; margin-bottom: 20px;">
-        <div id="g_id_onload" data-client_id="689849272801-7ecrvsb7beggv6e9qsrs11oouvrji08t.apps.googleusercontent.com" data-callback="verifyLucas"></div>
+    <!-- SISTEMA DE CUENTAS (CORREGIDO) -->
+    <div id="auth-zone" style="margin-bottom: 25px; text-align: center; background: white; padding: 20px; border-radius: 8px; border: 1px solid #ddd;">
+        <p style="margin-top:0; font-weight:bold;">INICIAR SESIÓN PARA SINCRONIZAR</p>
+        <div id="g_id_onload" data-client_id="689849272801-7ecrvsb7beggv6e9qsrs11oouvrji08t.apps.googleusercontent.com" data-callback="onLucasAuth"></div>
         <div class="g_id_signin" data-type="standard"></div>
     </div>
 
-    <!-- PANEL ADMIN MAESTRO -->
-    <div id="admin-panel" style="display:none; border: 2px solid var(--glow); padding:20px; margin-bottom:20px;">
-        <h4 style="color:var(--glow)">MODO_ADMIN_PABLO_ON</h4>
-        <input type="text" id="n-name" placeholder="Nombre Componente">
-        <input type="number" id="n-price" placeholder="Precio CLP">
-        <input type="text" id="n-img" placeholder="URL Imagen">
-        <button class="btn" onclick="addNew()">CARGAR A BASE DE DATOS LOCAL</button>
+    <!-- PANEL EXCLUSIVO PARA LUCAS -->
+    <div id="admin-panel">
+        <h4 style="margin:0 0 15px 0; color:var(--arduino-blue);">[ HERRAMIENTAS DE ADMINISTRADOR ]</h4>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <input type="text" id="add-name" placeholder="Nombre del Producto">
+            <input type="number" id="add-price" placeholder="Precio CLP">
+        </div>
+        <input type="text" id="add-img" placeholder="URL de la Imagen (Opcional)">
+        <button class="btn" onclick="uploadToSystem()">ACTUALIZAR INVENTARIO GLOBAL</button>
     </div>
 
-    <div class="grid" id="main-grid"></div>
-</div>
-
-<!-- CARRITO FLOTANTE -->
-<button onclick="toggleCart()" style="position:fixed; bottom:20px; right:20px; background:var(--glow); border:none; width:55px; height:55px; border-radius:50%; font-size:25px; z-index:2100;">🛒</button>
-
-<div id="cart-panel" style="display:none; position:fixed; bottom:0; left:0; width:100%; background:#1a1a1a; padding:20px; border-top:3px solid var(--teal); z-index:2000;">
-    <h4 style="margin:0;">LISTA_DE_COMPRA (PERSISTENTE)</h4>
-    <div id="cart-content" style="font-size: 12px; max-height: 80px; overflow-y: auto; margin:10px 0;"></div>
-    <select id="ship-calc" onchange="updateTotal()">
-        <option value="0">TIPO DE ENVÍO</option>
-        <option value="3500">RM ($3.500)</option>
-        <option value="5500">REGIONES ($5.500)</option>
-    </select>
-    <div style="font-weight:bold; margin-top:10px;">TOTAL: $<span id="total-price">0</span> CLP</div>
-    <button class="btn" style="background:#28a745" onclick="processOrder()">CONFIRMAR PEDIDO</button>
-</div>
-
-<footer>
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-        <div>
-            <strong>POLÍTICAS:</strong> 30 días de garantía en componentes.<br>
-            <strong>TUTORIALES:</strong> Log de programación Arduino activo.
-        </div>
-        <div>
-            <strong>SOPORTE:</strong> lutecpro20@gmail.com.<br>
-            <strong>ESTADO:</strong> v9.0 Pablo OS.
-        </div>
+    <div class="console" id="sys-log">
+        > LUCAS_OS_v13 LOADING...<br>
+        > ESPERANDO VALIDACIÓN DE USUARIO PARA CARGAR ARCHIVOS...
     </div>
-</footer>
+    
+    <input type="text" placeholder="🔍 Buscar componentes en la base de datos..." onkeyup="filterList(this.value)">
+
+    <div class="grid" id="product-list"></div>
+
+    <!-- ÁREA DE CARRITO (FUNCIONAL) -->
+    <div id="cart-area">
+        <h3 style="margin-top:0; color:var(--arduino-blue); border-bottom: 2px solid var(--arduino-teal); padding-bottom: 10px;">MI CARRITO SINCRONIZADO</h3>
+        <div id="cart-content" style="min-height: 50px;">
+            <p style="color: #888;">El carrito está vacío. Agrega componentes arriba.</p>
+        </div>
+        <div style="margin-top:20px; padding-top:15px; border-top: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 20px; font-weight: bold;">TOTAL: $<span id="total-price">0</span> CLP</span>
+            <button class="btn" style="background:#28a745; width: auto; padding: 12px 30px;" onclick="generateFinalInvoice()">GENERAR BOLETA</button>
+        </div>
+        
+        <div id="invoice"></div>
+    </div>
+
+    <div style="margin-top:30px; border-top: 1px solid #ccc; padding-top: 15px; font-size: 11px; color: #666; display: flex; justify-content: space-between;">
+        <span>TRACKING ID: LT-2026-CHILE</span>
+        <span>SOPORTE TÉCNICO: lutecpro20@gmail.com</span>
+    </div>
+</div>
 
 <script>
-    // CARGA DE DATOS PERSISTENTES (CARRITO Y PRODUCTOS)
-    let products = JSON.parse(localStorage.getItem('lutec_db')) || [
-        { id: 1, name: "Arduino Nano ESP32", price: 12500, stock: 5, img: "https://www.arduino.cc/en/uploads/Main/ArduinoNanoESP32-Product.jpg" }
+    // BASE DE DATOS Y ESTADO
+    let inventory = JSON.parse(localStorage.getItem('lutec_inventory')) || [
+        { id: 1, name: "Arduino Nano ESP32", price: 12500, img: "https://www.arduino.cc/en/uploads/Main/ArduinoNanoESP32-Product.jpg" },
+        { id: 2, name: "Raspberry Pi 3B", price: 45000, img: "https://www.raspberrypi.com/app/uploads/2018/02/Raspberry-Pi-3-Model-B-1-462x322.png" }
     ];
-    let cart = JSON.parse(localStorage.getItem('lutec_cart')) || [];
+    let cart = [];
+    let activeUser = "";
 
-    // VERIFICACIÓN DE CUENTA MAESTRA
-    function verifyLucas(resp) {
-        const user = JSON.parse(atob(resp.credential.split('.')[1]));
-        if(user.email === "lutecpro20@gmail.com") {
+    function onLucasAuth(response) {
+        const payload = JSON.parse(atob(response.credential.split('.')[1]));
+        activeUser = payload.email;
+        document.getElementById('user-display').innerText = "Lucas: " + activeUser;
+        
+        // SOLO LUCAS (lutecpro20@gmail.com) TIENE EL PANEL
+        if(activeUser === "lutecpro20@gmail.com") {
             document.getElementById('admin-panel').style.display = 'block';
-            document.getElementById('login-zone').style.display = 'none';
-        } else {
-            alert("ACCESO RESTRINGIDO: Esta cuenta no tiene permisos de administrador.");
-            // Permitimos que otras cuentas vean la tienda pero no el panel admin
         }
+
+        // Recuperar carrito guardado específicamente para esta cuenta
+        const saved = localStorage.getItem('cart_data_' + activeUser);
+        if(saved) {
+            cart = JSON.parse(saved);
+            updateCartUI();
+        }
+        
+        document.getElementById('sys-log').innerHTML = `> USUARIO: ${payload.name}<br>> ACCESO: Garantizado<br>> SINCRONIZACIÓN: Activa con el servidor.`;
     }
 
-    function render(list = products) {
-        const grid = document.getElementById('main-grid');
-        grid.innerHTML = "";
-        list.forEach(p => {
-            grid.innerHTML += `
-                <div class="card">
-                    <img src="${p.img}" class="p-img">
-                    <div style="font-size:11px; height:30px;">${p.name}</div>
-                    <div style="color:var(--glow); font-weight:bold;">$${p.price.toLocaleString()}</div>
-                    <button class="btn" onclick="add(${p.id})">AÑADIR</button>
+    function renderInventory(data = inventory) {
+        const container = document.getElementById('product-list');
+        container.innerHTML = data.map(p => `
+            <div class="card">
+                <img src="${p.img || 'https://via.placeholder.com/100?text=Arduino'}" class="p-img">
+                <div style="font-weight:bold; font-size:12px; margin-bottom:8px; height:32px; overflow:hidden;">${p.name}</div>
+                <div style="color:var(--arduino-blue); font-weight:bold; margin-bottom:10px;">$${p.price.toLocaleString()}</div>
+                <button class="btn" onclick="addToCart(${p.id})">Añadir</button>
+            </div>
+        `).join('');
+    }
+
+    function addToCart(id) {
+        const item = inventory.find(x => x.id === id);
+        cart.push({...item, cartId: Date.now()}); // ID único para poder borrar
+        saveAndSync();
+    }
+
+    function removeFromCart(cartId) {
+        cart = cart.filter(item => item.cartId !== cartId);
+        saveAndSync();
+    }
+
+    function saveAndSync() {
+        if(activeUser) {
+            localStorage.setItem('cart_data_' + activeUser, JSON.stringify(cart));
+        }
+        updateCartUI();
+    }
+
+    function updateCartUI() {
+        const container = document.getElementById('cart-content');
+        if(cart.length === 0) {
+            container.innerHTML = '<p style="color: #888;">El carrito está vacío. Agrega componentes arriba.</p>';
+        } else {
+            container.innerHTML = cart.map((item) => `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin:10px 0; padding:8px; background:#f9f9f9; border-radius:4px;">
+                    <span style="font-size:13px;">• ${item.name}</span>
+                    <span style="font-weight:bold;">$${item.price.toLocaleString()} 
+                        <button class="btn-del" onclick="removeFromCart(${item.cartId})">QUITAR</button>
+                    </span>
                 </div>
-            `;
-        });
-    }
-
-    // FUNCIÓN DE SEGUIMIENTO (RESTABLECIDA)
-    function checkTrack() {
-        const id = document.getElementById('tr-id').value;
-        const res = document.getElementById('track-res');
-        if(id.startsWith("LT")) {
-            res.innerHTML = `📦 <strong>ID: ${id}</strong><br>Estado: En tránsito a Santiago.<br>Fecha est.: 02/05/2026.`;
-        } else {
-            res.innerText = "ID de seguimiento no reconocido. Intenta con LT-01.";
+            `).join('');
         }
-    }
-
-    function runAI() {
-        const q = document.getElementById('ai-in').value.toLowerCase();
-        render(products.filter(p => p.name.toLowerCase().includes(q)));
-    }
-
-    function add(id) {
-        cart.push(products.find(x => x.id === id));
-        localStorage.setItem('lutec_cart', JSON.stringify(cart)); // Guardar carrito
-        updateTotal();
-    }
-
-    function updateTotal() {
-        let total = cart.reduce((s, i) => s + i.price, 0) + parseInt(document.getElementById('ship-calc').value);
+        const total = cart.reduce((acc, curr) => acc + curr.price, 0);
         document.getElementById('total-price').innerText = total.toLocaleString();
-        document.getElementById('cart-content').innerHTML = cart.map(i => `> ${i.name}`).join('<br>');
     }
 
-    function toggleCart() {
-        const p = document.getElementById('cart-panel');
-        p.style.display = p.style.display === 'block' ? 'none' : 'block';
+    function generateFinalInvoice() {
+        if(cart.length === 0) return alert("Error: El carrito debe tener productos.");
+        const inv = document.getElementById('invoice');
+        const total = document.getElementById('total-price').innerText;
+        inv.style.display = 'block';
+        inv.innerHTML = `
+            <div style="text-align:center; border-bottom:1px solid #000; padding-bottom:10px; margin-bottom:15px;">
+                <strong style="font-size:18px;">LUTEC PRO CHILE</strong><br>
+                Comprobante de Venta Electrónico
+            </div>
+            FOLIO: #LT-${Math.floor(Math.random()*999999)}<br>
+            FECHA: 02/05/2026<br>
+            CLIENTE: ${activeUser || 'Consumidor Final'}<br>
+            ------------------------------------------<br>
+            ${cart.map(i => i.name.substring(0,20).padEnd(20) + " $" + i.price.toLocaleString().padStart(10)).join('<br>')}<br>
+            ------------------------------------------<br>
+            <strong>TOTAL A PAGAR: ${"".padEnd(10)} $${total} CLP</strong><br><br>
+            <div style="font-size:12px; text-align:center;">
+                Gracias por su compra, Lucas.<br>
+                Documento válido para garantía de 30 días.
+            </div>
+        `;
     }
 
-    function addNew() {
-        const n = document.getElementById('n-name').value;
-        const p = parseInt(document.getElementById('n-price').value);
-        const i = document.getElementById('n-img').value;
-        if(n && p) {
-            products.push({ id: Date.now(), name: n, price: p, stock: 5, img: i });
-            localStorage.setItem('lutec_db', JSON.stringify(products));
-            render();
-            alert("COMPONENTES SINCRONIZADOS.");
+    function filterList(q) {
+        renderInventory(inventory.filter(p => p.name.toLowerCase().includes(q.toLowerCase())));
+    }
+
+    function uploadToSystem() {
+        const name = document.getElementById('add-name').value;
+        const price = parseInt(document.getElementById('add-price').value);
+        const img = document.getElementById('add-img').value;
+        
+        if(name && price) {
+            inventory.push({ id: Date.now(), name, price, img });
+            localStorage.setItem('lutec_inventory', JSON.stringify(inventory));
+            renderInventory();
+            alert("SISTEMA ACTUALIZADO: El componente ya es visible.");
+            document.getElementById('add-name').value = "";
+            document.getElementById('add-price').value = "";
         }
     }
 
-    function processOrder() {
-        alert("ORDEN REGISTRADA: El sistema ha generado tu folio de compra.");
-        cart = []; 
-        localStorage.removeItem('lutec_cart');
-        updateTotal();
-    }
-
-    render();
-    updateTotal(); // Cargar carrito guardado al iniciar
+    // ARRANQUE INICIAL
+    renderInventory();
 </script>
 </body>
 </html>
