@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>LUTEC | Catálogo & Admin</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        :root { --teal: #008184; --bg: #f4f7f6; --glass: rgba(255,255,255,0.9); }
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #333; }
+        
+        header { background: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top:0; z-index:100; }
+        .logo { color: var(--teal); font-weight: 900; font-size: 24px; cursor: pointer; }
+
+        /* VISTAS */
+        .container { padding: 40px 5%; max-width: 1200px; margin: 0 auto; }
+        #login-view { height: 70vh; display: flex; justify-content: center; align-items: center; flex-direction: column; }
+        #admin-controls { display: none; background: #e0e7e8; padding: 25px; border-radius: 15px; margin-bottom: 30px; border-left: 8px solid var(--teal); }
+        
+        /* PRODUCTOS */
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+        .p-card { background: white; padding: 20px; border-radius: 18px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: 0.3s; position: relative; }
+        .p-card:hover { transform: translateY(-5px); }
+        .p-img { width: 100%; height: 180px; object-fit: cover; border-radius: 12px; background: #eee; margin-bottom: 15px; }
+        
+        .badge-admin { position: absolute; top: 10px; right: 10px; background: var(--teal); color: white; padding: 4px 8px; border-radius: 5px; font-size: 10px; }
+        
+        /* BOTONES E INPUTS */
+        input, textarea { margin: 8px 0; padding: 12px; border-radius: 8px; border: 1px solid #ddd; width: 100%; box-sizing: border-box; }
+        .btn-main { background: var(--teal); color: white; border: none; padding: 14px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; }
+        .btn-main:hover { background: #005f61; }
+        .btn-guest { background: #666; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; margin-top: 10px; width: 200px; }
+        .btn-del { color: #ff4757; border: none; background: none; cursor: pointer; font-weight: bold; margin-bottom: 10px; padding: 0; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo" onclick="location.reload()">LUTEC PRO</div>
+    <div id="user-display" style="font-weight: 600; color: var(--teal);">Modo Lectura</div>
+</header>
+
+<div class="container">
+    <!-- PANTALLA DE ACCESO -->
+    <div id="login-view">
+        <div style="background:white; padding:40px; border-radius:25px; box-shadow:0 20px 40px rgba(0,0,0,0.1); text-align:center;">
+            <h2>Identificación</h2>
+            <p>Accede para gestionar o ver el catálogo.</p>
+            <div id="g_id_onload" data-client_id="689849272801-7ecrvsb7beggv6e9qsrs11oouvrji08t.apps.googleusercontent.com" data-callback="onSignIn"></div>
+            <div class="g_id_signin" data-type="standard"></div>
+            <hr style="margin: 25px 0; border:0; border-top:1px solid #eee;">
+            <button class="btn-main" onclick="accessAs('Admin')">Acceso Directo Lucas (Admin)</button>
+            <button class="btn-guest" onclick="accessAs('Invitado')">Entrar como Invitado</button>
+        </div>
+    </div>
+
+    <!-- PANEL DE ADMINISTRACIÓN (SOLO LUCAS) -->
+    <div id="admin-controls">
+        <h3>🚀 Panel de Control Maestro</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <input type="text" id="n-name" placeholder="Nombre del componente">
+            <input type="text" id="n-price" placeholder="Precio (Ej: 15.000 CLP)">
+        </div>
+        <textarea id="n-desc" placeholder="Descripción del producto..."></textarea>
+        <input type="text" id="n-img" placeholder="Link de la imagen (URL)">
+        <button class="btn-main" onclick="addItem()" style="margin-top:10px;">PUBLICAR EN CATÁLOGO</button>
+    </div>
+
+    <!-- GRILLA DE PRODUCTOS -->
+    <div id="main-content" style="display:none;">
+        <h2 id="view-title">Catálogo Lutec</h2>
+        <div class="product-grid" id="grid"></div>
+    </div>
+</div>
+
+<script>
+    let currentRole = 'Invitado';
+    let products = [
+        { id: 1, name: "Arduino Nano ESP32", price: "12.500 CLP", desc: "Microcontrolador potente con WiFi y Bluetooth integrado.", img: "https://www.arduino.cc/en/uploads/Main/ArduinoNanoESP32-Product.jpg" },
+        { id: 2, name: "Kit Cuadrúpedo", price: "45.000 CLP", desc: "Estructura completa para robot de 4 patas con servos.", img: "https://m.media-amazon.com/images/I/61NlH2yD2-L._AC_SL1000_.jpg" }
+    ];
+
+    function onSignIn(response) {
+        const user = JSON.parse(atob(response.credential.split('.')[1]));
+        if(user.email === "lutecpro20@gmail.com") { accessAs('Admin', user.name); }
+        else { accessAs('Invitado', user.name); }
+    }
+
+    function accessAs(role, name = "Lucas") {
+        currentRole = role;
+        document.getElementById('login-view').style.display = 'none';
+        document.getElementById('main-content').style.display = 'block';
+        document.getElementById('user-display').innerText = role + ": " + (role === 'Admin' ? 'Lucas' : 'Visitante');
+        
+        if(role === 'Admin') {
+            document.getElementById('admin-controls').style.display = 'block';
+        }
+        render();
+    }
+
+    function render() {
+        const grid = document.getElementById('grid');
+        grid.innerHTML = "";
+        products.forEach(p => {
+            const isAdmin = currentRole === 'Admin';
+            grid.innerHTML += `
+                <div class="p-card">
+                    ${isAdmin ? `<span class="badge-admin">Admin</span><button class="btn-del" onclick="remove(${p.id})">✖ Eliminar</button>` : ''}
+                    <img src="${p.img}" class="p-img" onerror="this.src='https://via.placeholder.com/300x180?text=Lutec+Hardware'">
+                    <h3>${p.name}</h3>
+                    <p style="font-size:13px; color:#666; min-height:40px;">${p.desc}</p>
+                    <p style="color:var(--teal); font-weight:bold; font-size:22px; margin: 10px 0;">${p.price}</p>
+                    ${isAdmin ? `<button class="btn-main" style="padding:8px" onclick="edit(${p.id})">Modificar Precio</button>` : ''}
+                </div>
+            `;
+        });
+    }
+
+    function addItem() {
+        const n = document.getElementById('n-name').value;
+        const p = document.getElementById('n-price').value;
+        const d = document.getElementById('n-desc').value;
+        const i = document.getElementById('n-img').value;
+        if(n && p) {
+            products.push({ id: Date.now(), name: n, price: p, desc: d, img: i });
+            render();
+            // Limpiar campos
+            document.getElementById('n-name').value = "";
+            document.getElementById('n-price').value = "";
+            document.getElementById('n-desc').value = "";
+            document.getElementById('n-img').value = "";
+        }
+    }
+
+    function remove(id) { products = products.filter(x => x.id !== id); render(); }
+    
+    function edit(id) {
+        const np = prompt("Nuevo precio:");
+        if(np) { products.find(x => x.id === id).price = np; render(); }
+    }
+</script>
+</body>
+</html>
