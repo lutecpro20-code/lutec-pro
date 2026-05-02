@@ -2,237 +2,179 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>LUTEC PRO | Operating System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUTEC PRO | Lucas Edition</title>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
-        :root { --glow: #00ff41; --teal: #008184; --dark: #1e1e1e; --bg: #0d0d0d; --text: #e0e0e0; }
-        body { margin: 0; font-family: 'Consolas', 'Courier New', monospace; background: var(--bg); color: var(--text); line-height: 1.4; }
+        :root { --glow: #00ff41; --teal: #008184; --dark: #0d0d0d; --card: #1a1a1a; }
+        body { margin: 0; font-family: 'Consolas', monospace; background: var(--dark); color: #e0e0e0; overflow-x: hidden; }
         
         /* HEADER ESTILO ARDUINO IDE */
-        header { background: #006468; padding: 10px 5%; display: flex; justify-content: space-between; align-items: center; color: white; border-bottom: 2px solid var(--glow); position: sticky; top:0; z-index:1000; }
-        .btn-mode { background: #004a4d; border: 1px solid white; color: white; padding: 5px 10px; cursor: pointer; font-size: 12px; }
+        header { background: #006468; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--glow); position: sticky; top: 0; z-index: 1000; }
+        .logo { font-weight: bold; color: white; letter-spacing: 1px; font-size: 1.1rem; }
 
-        .container { padding: 20px 5%; max-width: 1300px; margin: 0 auto; }
+        .container { padding: 15px; max-width: 1200px; margin: 0 auto; padding-bottom: 100px; }
 
-        /* MINI IA Y TERMINAL */
-        .terminal-box { background: var(--dark); border: 1px solid var(--teal); padding: 15px; border-radius: 5px; margin-bottom: 20px; box-shadow: 0 0 15px rgba(0,255,65,0.1); }
-        input, select, textarea { background: #2d2d2d; border: 1px solid var(--teal); color: var(--glow); padding: 10px; margin: 5px 0; width: 100%; box-sizing: border-box; font-family: inherit; }
+        /* TERMINAL IA (12) */
+        .ia-terminal { background: #000; border: 1px solid var(--teal); padding: 10px; border-radius: 5px; margin-bottom: 20px; box-shadow: 0 0 10px rgba(0,255,65,0.1); }
+        input, select { background: #1e1e1e; border: 1px solid var(--teal); color: var(--glow); padding: 12px; width: 100%; border-radius: 4px; margin: 5px 0; font-family: inherit; box-sizing: border-box; }
 
-        /* CARRITO Y CHECKOUT */
-        .checkout-grid { display: grid; grid-template-columns: 1fr 350px; gap: 20px; }
-        .panel { background: #1a1a1a; border: 1px solid #333; padding: 20px; border-radius: 8px; }
+        /* GRILLA RESPONSIVA (OPTIMIZADO TELÉFONO) */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
+        .card { background: var(--card); border: 1px solid #333; padding: 12px; border-radius: 8px; position: relative; transition: 0.3s; }
+        .card:hover { border-color: var(--glow); }
+        .p-img { width: 100%; height: 130px; object-fit: cover; border-radius: 4px; margin-bottom: 8px; }
+        
+        /* BOTONES HARDWARE */
+        .btn { background: var(--teal); color: white; border: none; padding: 12px; cursor: pointer; font-weight: bold; width: 100%; border-radius: 4px; margin-top: 5px; }
+        .btn:active { background: var(--glow); color: #000; }
+        .badge-stock { position: absolute; top: 8px; right: 8px; background: red; font-size: 9px; padding: 2px 5px; border-radius: 3px; }
 
-        /* CATALOGO */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; margin-top: 20px; }
-        .card { background: #252525; border: 1px solid #444; padding: 15px; border-radius: 4px; position: relative; transition: 0.3s; }
-        .card:hover { border-color: var(--glow); box-shadow: 0 0 10px var(--glow); }
-        .p-img { width: 100%; height: 140px; object-fit: cover; border-radius: 2px; margin-bottom: 10px; opacity: 0.8; }
-        .stock-tag { position: absolute; top: 10px; right: 10px; background: red; font-size: 10px; padding: 2px 5px; }
+        /* CARRITO FLOTANTE (1, 2, 5, 9) */
+        #cart-panel { background: #1a1a1a; border-top: 3px solid var(--teal); position: fixed; bottom: 0; left: 0; width: 100%; padding: 20px; box-sizing: border-box; display: none; z-index: 2000; box-shadow: 0 -10px 30px rgba(0,0,0,0.8); }
 
-        .btn-action { background: var(--teal); color: white; border: none; padding: 10px; width: 100%; cursor: pointer; font-weight: bold; text-transform: uppercase; margin-top: 10px; }
-        .btn-action:hover { background: var(--glow); color: black; }
-
-        /* FOOTER */
-        footer { background: #1a1a1a; padding: 30px; margin-top: 50px; border-top: 1px solid var(--teal); font-size: 12px; }
+        /* PANEL ADMIN EXCLUSIVO LUCAS (13) */
+        #admin-panel { display: none; background: #002b2d; border: 1px solid var(--glow); padding: 20px; border-radius: 8px; margin-bottom: 20px; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo">LUTEC_PRO_v4.0_LUCAS</div>
-    <div id="top-info">
-        <span id="visitor-count">Visitas: 128</span> | 
-        <button class="btn-mode" onclick="toggleTheme()">CAMBIAR TEMA</button>
-    </div>
+    <div class="logo">> LUTEC_PRO_OS_v6</div>
+    <div id="stats" style="font-size: 10px;">VISITAS: <span id="v-count">128</span></div>
 </header>
 
 <div class="container">
-    <!-- 12. IA DE RECOMENDACIÓN / BÚSQUEDA (9) -->
-    <div class="terminal-box">
-        <span style="color:var(--glow)">lucas@lutec:~$</span> 
-        <input type="text" id="ia-cmd" placeholder="Buscar componente o preguntar a la IA..." onkeyup="runIA()">
-        <div id="ia-output" style="font-size: 12px; margin-top: 10px; color: #aaa;">SISTEMA LISTO...</div>
+    <!-- IA Y BÚSQUEDA (12) -->
+    <div class="ia-terminal">
+        <span style="color:var(--glow)">LUCAS_AI:~$</span>
+        <input type="text" id="ai-in" placeholder="¿Qué buscas hoy?" onkeyup="runAI()">
+        <div id="ai-out" style="font-size: 11px; margin-top: 8px; color: #888;">SISTEMA OPERATIVO LISTO</div>
     </div>
 
-    <div class="checkout-grid">
-        <div class="panel">
-            <!-- 1. SEGUIMIENTO (TRACKING) -->
-            <h4>[ 01_TRACKING_SISTEMA ]</h4>
-            <input type="text" placeholder="Ingrese ID de seguimiento..." id="track-id">
-            <button onclick="checkTrack()" class="btn-action" style="width: auto; padding: 5px 15px;">CONSULTAR</button>
-            <div id="track-res" style="font-size: 11px; margin-top: 5px;"></div>
-
-            <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
-
-            <!-- 10. CATEGORÍAS -->
-            <div id="cats">
-                <button onclick="render('todas')" class="btn-mode">TODOS</button>
-                <button onclick="render('placas')" class="btn-mode">PLACAS</button>
-                <button onclick="render('sensores')" class="btn-mode">SENSORES</button>
-            </div>
-
-            <div class="grid" id="main-grid"></div>
-        </div>
-
-        <div class="panel">
-            <!-- 20. CONTADOR Y PERFIL (13) -->
-            <div id="user-profile" style="margin-bottom: 20px;">
-                <div id="g_id_onload" data-client_id="689849272801-7ecrvsb7beggv6e9qsrs11oouvrji08t.apps.googleusercontent.com" data-callback="onSignIn"></div>
-                <div class="g_id_signin" data-type="standard"></div>
-                <button class="btn-action" onclick="accessAs('Admin')" id="btn-lucas">ACCESO ADMIN (LUCAS)</button>
-            </div>
-
-            <!-- CARRITO Y COMPRA -->
-            <h4>[ 02_CARRITO_DE_COMPRAS ]</h4>
-            <div id="cart-list" style="font-size: 12px; min-height: 50px;">Vacío.</div>
-            
-            <!-- 5. CUPONES -->
-            <input type="text" id="coupon" placeholder="¿Cupón de descuento?">
-            
-            <!-- 9. CALCULADORA ENVÍO -->
-            <select id="region" onchange="calcShipping()">
-                <option value="0">Seleccionar Región (Chile)</option>
-                <option value="3500">Región Metropolitana ($3.500)</option>
-                <option value="5500">Otras Regiones ($5.500)</option>
-            </select>
-
-            <div style="background:#000; padding:10px; margin-top:10px; border: 1px solid var(--glow);">
-                TOTAL: $<span id="total-price">0</span> CLP
-            </div>
-
-            <!-- 4. STOCK Y COMPRA -->
-            <button class="btn-action" style="background:#28a745" onclick="finalCheckout()">GENERAR FACTURA (2)</button>
-        </div>
+    <!-- LOGIN GOOGLE (13) -->
+    <div id="login-zone" style="text-align: center; margin-bottom: 20px;">
+        <div id="g_id_onload" data-client_id="689849272801-7ecrvsb7beggv6e9qsrs11oouvrji08t.apps.googleusercontent.com" data-callback="verifyLucas"></div>
+        <div class="g_id_signin" data-type="standard"></div>
     </div>
 
-    <!-- 18. BLOG / TUTORIALES -->
-    <div class="panel" style="margin-top: 20px;">
-        <h4>[ 18_LUCAS_TUTORIALS_LOG ]</h4>
-        <p style="font-size: 12px;">> 02/05/2026: Cómo programar el ESP32 para domótica básica...</p>
+    <!-- PANEL ADMIN (SOLO APARECE PARA LUCAS) -->
+    <div id="admin-panel">
+        <h4 style="color:var(--glow); margin-top:0;">[ MODO_MAESTRO_ACTIVO ]</h4>
+        <input type="text" id="n-name" placeholder="Nombre Componente">
+        <input type="number" id="n-price" placeholder="Precio CLP">
+        <input type="text" id="n-img" placeholder="URL Imagen">
+        <button class="btn" onclick="addNew()">SINCRONIZAR PRODUCTO</button>
     </div>
+
+    <!-- TRACKING (1) -->
+    <div style="background:#111; padding:10px; border-radius:5px; margin-bottom:20px; font-size:12px;">
+        TRACKING: <input type="text" id="tr-id" placeholder="ID de envío..." style="width:150px; padding:5px;">
+        <button onclick="alert('ESTADO: En transito vía Chilexpress (2 Mayo)')">OK</button>
+    </div>
+
+    <div class="grid" id="main-grid"></div>
 </div>
 
-<div id="admin-zone" class="container" style="display:none; background:#1e1e1e; border: 2px solid var(--glow); margin-top: 20px;">
-    <h3>// TERMINAL_ADMIN_LUCAS</h3>
-    <input type="text" id="n-name" placeholder="Nombre">
-    <input type="number" id="n-price" placeholder="Precio">
-    <select id="n-cat"><option value="placas">Placas</option><option value="sensores">Sensores</option></select>
-    <input type="text" id="n-img" placeholder="Link Imagen">
-    <button class="btn-action" onclick="addItem()">PUSH_TO_DATABASE</button>
-</div>
+<!-- CARRITO (2, 5, 9) -->
+<button onclick="toggleCart()" style="position:fixed; bottom:20px; right:20px; background:var(--glow); border:none; width:55px; height:55px; border-radius:50%; font-size:25px; z-index:2100; box-shadow: 0 0 15px var(--glow);">🛒</button>
 
-<footer>
-    <!-- 6. DEVOLUCIONES Y 19. SOPORTE -->
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-        <div>
-            <strong>POLÍTICA DE DEVOLUCIÓN (6):</strong> 30 días de garantía técnica. No aplica a componentes soldados.<br>
-            <strong>TUTORIALES (18):</strong> Mira nuestros logs de programación para aprender gratis.
-        </div>
-        <div>
-            <strong>SOPORTE TÉCNICO (19):</strong> Si tu código no compila, escríbenos: <span style="color:var(--glow)">soporte@lutec.cl</span><br>
-            <strong>SISTEMA:</strong> Lutec Pro OS ejecutándose en MacBook Air A1466.
-        </div>
-    </div>
-</footer>
+<div id="cart-panel">
+    <h4 style="margin-top:0;">CARRITO_LOGS (FACTURA_v2)</h4>
+    <div id="cart-content" style="font-size: 12px; max-height: 100px; overflow-y: auto;"></div>
+    <hr style="border:0; border-top:1px solid #333;">
+    <input type="text" id="coupon" placeholder="CUPÓN (LUCAS10)" style="margin:5px 0;">
+    <select id="ship-calc" onchange="updateTotal()">
+        <option value="0">SELECCIONAR ENVÍO (9)</option>
+        <option value="3500">RM ($3.500)</option>
+        <option value="5500">REGIONES ($5.500)</option>
+    </select>
+    <div style="font-weight:bold; margin:10px 0;">TOTAL: $<span id="total-price">0</span> CLP</div>
+    <button class="btn" style="background:#28a745" onclick="checkout()">GENERAR PEDIDO WHATSAPP</button>
+</div>
 
 <script>
-    let cart = [];
-    let shipping = 0;
-    let products = [
-        { id: 1, name: "Arduino Nano ESP32", price: 12500, cat: "placas", stock: 5, img: "https://www.arduino.cc/en/uploads/Main/ArduinoNanoESP32-Product.jpg" },
-        { id: 2, name: "Sensor Ultrasonido", price: 3200, cat: "sensores", stock: 0, img: "https://m.media-amazon.com/images/I/51pI-a6Xh2L.jpg" }
+    // 20. VISITAS Y PERSISTENCIA (SINCRONIZACIÓN)
+    let products = JSON.parse(localStorage.getItem('lutec_db')) || [
+        { id: 1, name: "Arduino Nano ESP32", price: 12500, stock: 5, img: "https://www.arduino.cc/en/uploads/Main/ArduinoNanoESP32-Product.jpg" },
+        { id: 2, name: "Raspberry Pi 3B", price: 45000, stock: 0, img: "https://m.media-amazon.com/images/I/91zXv7A9y0L._AC_SL1500_.jpg" }
     ];
+    let cart = [];
 
-    function onSignIn(resp) {
+    // 13. SEGURIDAD BLINDADA PARA LUCAS
+    function verifyLucas(resp) {
         const user = JSON.parse(atob(resp.credential.split('.')[1]));
-        if(user.email === "lutecpro20@gmail.com") accessAs('Admin');
-    }
-
-    function accessAs(role) {
-        if(role === 'Admin') {
-            document.getElementById('admin-zone').style.display = 'block';
-            document.getElementById('btn-lucas').innerText = "LUCAS_LOGGED_IN";
+        if(user.email === "lutecpro20@gmail.com") {
+            document.getElementById('admin-panel').style.display = 'block';
+            document.getElementById('login-zone').style.display = 'none';
+            alert("BIENVENIDO MAESTRO LUCAS");
+        } else {
+            alert("ACCESO DENEGADO: Solo lutecpro20@gmail.com");
+            location.reload();
         }
-        render();
     }
 
-    function render(filter = 'todas') {
+    function render(list = products) {
         const grid = document.getElementById('main-grid');
         grid.innerHTML = "";
-        const list = filter === 'todas' ? products : products.filter(p => p.cat === filter);
-        
         list.forEach(p => {
             grid.innerHTML += `
                 <div class="card">
-                    ${p.stock === 0 ? '<span class="stock-tag">AGOTADO (4)</span>' : ''}
+                    ${p.stock === 0 ? '<span class="badge-stock">AGOTADO (4)</span>' : ''}
                     <img src="${p.img}" class="p-img">
-                    <div style="font-size:14px; height:40px;">${p.name}</div>
-                    <div style="color:var(--glow)">$${p.price.toLocaleString()} CLP</div>
-                    <button class="btn-action" style="font-size:10px" onclick="addToCart(${p.id})">ADD_TO_CART</button>
+                    <div style="font-size:12px; height:35px;">${p.name}</div>
+                    <div style="color:var(--glow); font-weight:bold;">$${p.price.toLocaleString()}</div>
+                    <button class="btn" style="font-size:11px; padding:8px" onclick="add(${p.id})">AÑADIR</button>
                 </div>
             `;
         });
     }
 
-    // 12. IA RECOMENDACIÓN
-    function runIA() {
-        const cmd = document.getElementById('ia-cmd').value.toLowerCase();
-        const out = document.getElementById('ia-output');
-        if(cmd.includes("arduino")) out.innerText = "IA: Te recomiendo el Nano ESP32 por su velocidad.";
-        else if(cmd.includes("hola")) out.innerText = "IA: Hola Lucas, listo para despachar componentes.";
-        else out.innerText = "IA: Monitoreando inventario...";
-        // Filtro rápido (9)
-        const found = products.filter(p => p.name.toLowerCase().includes(cmd));
-        if(cmd) renderList(found);
+    function runAI() {
+        const q = document.getElementById('ai-in').value.toLowerCase();
+        const out = document.getElementById('ai-out');
+        const found = products.filter(p => p.name.toLowerCase().includes(q));
+        render(found);
+        if(q.includes("hola")) out.innerText = "IA: Hola Lucas, ¿qué sensor programaremos hoy?";
+        else out.innerText = `IA: Encontrados ${found.length} componentes.`;
     }
 
-    function renderList(l) { /* Función auxiliar para la IA */ }
-
-    function addToCart(id) {
+    function add(id) {
         const p = products.find(x => x.id === id);
-        if(p.stock > 0) { cart.push(p); updateCart(); }
-        else alert("SISTEMA: Error de Stock (4).");
+        if(p.stock > 0) { cart.push(p); updateTotal(); }
+        else alert("ERROR_STOCK: Producto agotado.");
     }
 
-    function updateCart() {
-        const list = document.getElementById('cart-list');
-        list.innerHTML = cart.map(i => `> ${i.name} - $${i.price}`).join('<br>');
-        calcShipping();
-    }
-
-    // 9. CALCULADORA ENVÍO
-    function calcShipping() {
-        shipping = parseInt(document.getElementById('region').value);
-        let total = cart.reduce((s, i) => s + i.price, 0) + shipping;
-        // 5. CUPÓN
+    function updateTotal() {
+        const list = document.getElementById('cart-content');
+        list.innerHTML = cart.map(i => `> ${i.name} - $${i.price.toLocaleString()}`).join('<br>');
+        let total = cart.reduce((s, i) => s + i.price, 0);
+        total += parseInt(document.getElementById('ship-calc').value);
         if(document.getElementById('coupon').value === "LUCAS10") total *= 0.9;
         document.getElementById('total-price').innerText = total.toLocaleString();
     }
 
-    // 1. TRACKING
-    function checkTrack() {
-        const id = document.getElementById('track-id').value;
-        document.getElementById('track-res').innerText = id ? "ESTADO: En bodega de Santiago (2 de mayo)" : "ID Inválido.";
+    function toggleCart() {
+        const p = document.getElementById('cart-panel');
+        p.style.display = p.style.display === 'block' ? 'none' : 'block';
     }
 
-    // 2. FACTURA (SIMULADA)
-    function finalCheckout() {
-        if(cart.length === 0) return;
-        alert("--- FACTURA LUTEC PRO ---\nCliente: Lucas\nTotal: $" + document.getElementById('total-price').innerText + "\nEnvío: Chilexpress\n¡Gracias!");
-        cart = []; updateCart();
-    }
-
-    function addItem() {
+    function addNew() {
         const n = document.getElementById('n-name').value;
         const p = parseInt(document.getElementById('n-price').value);
-        const c = document.getElementById('n-cat').value;
         const i = document.getElementById('n-img').value;
-        products.push({id: Date.now(), name: n, price: p, cat: c, stock: 5, img: i});
-        render();
+        if(n && p) {
+            products.push({ id: Date.now(), name: n, price: p, stock: 5, img: i });
+            localStorage.setItem('lutec_db', JSON.stringify(products));
+            render();
+            alert("SINCRONIZADO: Producto guardado en este navegador.");
+        }
     }
 
-    function toggleTheme() {
-        document.body.style.filter = document.body.style.filter === "invert(1)" ? "invert(0)" : "invert(1)";
+    function checkout() {
+        if(cart.length === 0) return;
+        const text = `Hola Lucas, pedido de LUTEC: ${cart.map(i => i.name).join(", ")}. Total: $${document.getElementById('total-price').innerText}`;
+        window.open(`https://wa.me/569XXXXXXXX?text=${encodeURIComponent(text)}`);
     }
 
     render();
