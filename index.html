@@ -9,107 +9,97 @@
         :root { --glow: #00ff41; --teal: #008184; --dark: #0d0d0d; --card: #1a1a1a; }
         body { margin: 0; font-family: 'Consolas', monospace; background: var(--dark); color: #e0e0e0; overflow-x: hidden; }
         
-        /* HEADER ESTILO ARDUINO IDE */
         header { background: #006468; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--glow); position: sticky; top: 0; z-index: 1000; }
-        .logo { font-weight: bold; color: white; letter-spacing: 1px; font-size: 1.1rem; }
+        .logo { font-weight: bold; color: white; font-size: 1.1rem; }
 
         .container { padding: 15px; max-width: 1200px; margin: 0 auto; padding-bottom: 100px; }
 
-        /* TERMINAL IA (12) */
-        .ia-terminal { background: #000; border: 1px solid var(--teal); padding: 10px; border-radius: 5px; margin-bottom: 20px; box-shadow: 0 0 10px rgba(0,255,65,0.1); }
+        /* TERMINAL IA (9, 12) */
+        .ia-terminal { background: #000; border: 1px solid var(--teal); padding: 10px; border-radius: 5px; margin-bottom: 20px; }
         input, select { background: #1e1e1e; border: 1px solid var(--teal); color: var(--glow); padding: 12px; width: 100%; border-radius: 4px; margin: 5px 0; font-family: inherit; box-sizing: border-box; }
 
-        /* GRILLA RESPONSIVA (OPTIMIZADO TELÉFONO) */
+        /* GRILLA RESPONSIVA PARA TELÉFONO */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
-        .card { background: var(--card); border: 1px solid #333; padding: 12px; border-radius: 8px; position: relative; transition: 0.3s; }
-        .card:hover { border-color: var(--glow); }
-        .p-img { width: 100%; height: 130px; object-fit: cover; border-radius: 4px; margin-bottom: 8px; }
+        .card { background: var(--card); border: 1px solid #333; padding: 12px; border-radius: 8px; position: relative; }
+        .p-img { width: 100%; height: 130px; object-fit: cover; border-radius: 4px; }
         
-        /* BOTONES HARDWARE */
         .btn { background: var(--teal); color: white; border: none; padding: 12px; cursor: pointer; font-weight: bold; width: 100%; border-radius: 4px; margin-top: 5px; }
         .btn:active { background: var(--glow); color: #000; }
         .badge-stock { position: absolute; top: 8px; right: 8px; background: red; font-size: 9px; padding: 2px 5px; border-radius: 3px; }
 
-        /* CARRITO FLOTANTE (1, 2, 5, 9) */
-        #cart-panel { background: #1a1a1a; border-top: 3px solid var(--teal); position: fixed; bottom: 0; left: 0; width: 100%; padding: 20px; box-sizing: border-box; display: none; z-index: 2000; box-shadow: 0 -10px 30px rgba(0,0,0,0.8); }
-
-        /* PANEL ADMIN EXCLUSIVO LUCAS (13) */
+        /* CARRITO Y FACTURA (2) */
+        #cart-panel { background: #1a1a1a; border-top: 3px solid var(--teal); position: fixed; bottom: 0; left: 0; width: 100%; padding: 20px; box-sizing: border-box; display: none; z-index: 2000; }
+        
+        /* PANEL ADMIN EXCLUSIVO (13) */
         #admin-panel { display: none; background: #002b2d; border: 1px solid var(--glow); padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        
+        /* MODAL DE ORDEN FINAL */
+        #order-modal { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:black; border:2px solid var(--glow); padding:20px; z-index:3000; width:90%; max-width:400px; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo">> LUTEC_PRO_OS_v6</div>
+    <div class="logo">> LUTEC_PRO_OS_v7</div>
     <div id="stats" style="font-size: 10px;">VISITAS: <span id="v-count">128</span></div>
 </header>
 
 <div class="container">
-    <!-- IA Y BÚSQUEDA (12) -->
     <div class="ia-terminal">
         <span style="color:var(--glow)">LUCAS_AI:~$</span>
-        <input type="text" id="ai-in" placeholder="¿Qué buscas hoy?" onkeyup="runAI()">
-        <div id="ai-out" style="font-size: 11px; margin-top: 8px; color: #888;">SISTEMA OPERATIVO LISTO</div>
+        <input type="text" id="ai-in" placeholder="¿Qué buscas?" onkeyup="runAI()">
+        <div id="ai-out" style="font-size: 11px; margin-top: 8px; color: #888;">SISTEMA LISTO</div>
     </div>
 
-    <!-- LOGIN GOOGLE (13) -->
     <div id="login-zone" style="text-align: center; margin-bottom: 20px;">
         <div id="g_id_onload" data-client_id="689849272801-7ecrvsb7beggv6e9qsrs11oouvrji08t.apps.googleusercontent.com" data-callback="verifyLucas"></div>
         <div class="g_id_signin" data-type="standard"></div>
     </div>
 
-    <!-- PANEL ADMIN (SOLO APARECE PARA LUCAS) -->
     <div id="admin-panel">
-        <h4 style="color:var(--glow); margin-top:0;">[ MODO_MAESTRO_ACTIVO ]</h4>
+        <h4 style="color:var(--glow); margin-top:0;">[ ADMIN_MAESTRO_CONECTADO ]</h4>
         <input type="text" id="n-name" placeholder="Nombre Componente">
         <input type="number" id="n-price" placeholder="Precio CLP">
         <input type="text" id="n-img" placeholder="URL Imagen">
-        <button class="btn" onclick="addNew()">SINCRONIZAR PRODUCTO</button>
-    </div>
-
-    <!-- TRACKING (1) -->
-    <div style="background:#111; padding:10px; border-radius:5px; margin-bottom:20px; font-size:12px;">
-        TRACKING: <input type="text" id="tr-id" placeholder="ID de envío..." style="width:150px; padding:5px;">
-        <button onclick="alert('ESTADO: En transito vía Chilexpress (2 Mayo)')">OK</button>
+        <button class="btn" onclick="addNew()">SINCRONIZAR A LUTEC_DB</button>
     </div>
 
     <div class="grid" id="main-grid"></div>
 </div>
 
-<!-- CARRITO (2, 5, 9) -->
-<button onclick="toggleCart()" style="position:fixed; bottom:20px; right:20px; background:var(--glow); border:none; width:55px; height:55px; border-radius:50%; font-size:25px; z-index:2100; box-shadow: 0 0 15px var(--glow);">🛒</button>
+<button onclick="toggleCart()" style="position:fixed; bottom:20px; right:20px; background:var(--glow); border:none; width:55px; height:55px; border-radius:50%; font-size:25px; z-index:2100;">🛒</button>
 
 <div id="cart-panel">
-    <h4 style="margin-top:0;">CARRITO_LOGS (FACTURA_v2)</h4>
-    <div id="cart-content" style="font-size: 12px; max-height: 100px; overflow-y: auto;"></div>
-    <hr style="border:0; border-top:1px solid #333;">
-    <input type="text" id="coupon" placeholder="CUPÓN (LUCAS10)" style="margin:5px 0;">
+    <h4 style="margin-top:0;">PANEL_DE_COMPRA</h4>
+    <div id="cart-content" style="font-size: 12px; max-height: 80px; overflow-y: auto;"></div>
     <select id="ship-calc" onchange="updateTotal()">
         <option value="0">SELECCIONAR ENVÍO (9)</option>
         <option value="3500">RM ($3.500)</option>
         <option value="5500">REGIONES ($5.500)</option>
     </select>
     <div style="font-weight:bold; margin:10px 0;">TOTAL: $<span id="total-price">0</span> CLP</div>
-    <button class="btn" style="background:#28a745" onclick="checkout()">GENERAR PEDIDO WHATSAPP</button>
+    <button class="btn" style="background:#28a745" onclick="processInternalOrder()">FINALIZAR PEDIDO (2)</button>
+</div>
+
+<div id="order-modal">
+    <h3 style="color:var(--glow)">ORDEN GENERADA</h3>
+    <pre id="order-details" style="font-size:12px; border:1px dashed #555; padding:10px;"></pre>
+    <button class="btn" onclick="document.getElementById('order-modal').style.display='none'">CERRAR</button>
 </div>
 
 <script>
-    // 20. VISITAS Y PERSISTENCIA (SINCRONIZACIÓN)
     let products = JSON.parse(localStorage.getItem('lutec_db')) || [
-        { id: 1, name: "Arduino Nano ESP32", price: 12500, stock: 5, img: "https://www.arduino.cc/en/uploads/Main/ArduinoNanoESP32-Product.jpg" },
-        { id: 2, name: "Raspberry Pi 3B", price: 45000, stock: 0, img: "https://m.media-amazon.com/images/I/91zXv7A9y0L._AC_SL1500_.jpg" }
+        { id: 1, name: "Arduino Nano ESP32", price: 12500, stock: 5, img: "https://www.arduino.cc/en/uploads/Main/ArduinoNanoESP32-Product.jpg" }
     ];
     let cart = [];
 
-    // 13. SEGURIDAD BLINDADA PARA LUCAS
     function verifyLucas(resp) {
         const user = JSON.parse(atob(resp.credential.split('.')[1]));
         if(user.email === "lutecpro20@gmail.com") {
             document.getElementById('admin-panel').style.display = 'block';
             document.getElementById('login-zone').style.display = 'none';
-            alert("BIENVENIDO MAESTRO LUCAS");
         } else {
-            alert("ACCESO DENEGADO: Solo lutecpro20@gmail.com");
+            alert("Acceso denegado: Solo Lucas.");
             location.reload();
         }
     }
@@ -120,11 +110,11 @@
         list.forEach(p => {
             grid.innerHTML += `
                 <div class="card">
-                    ${p.stock === 0 ? '<span class="badge-stock">AGOTADO (4)</span>' : ''}
+                    ${p.stock === 0 ? '<span class="badge-stock">AGOTADO</span>' : ''}
                     <img src="${p.img}" class="p-img">
-                    <div style="font-size:12px; height:35px;">${p.name}</div>
+                    <div style="font-size:11px; height:30px;">${p.name}</div>
                     <div style="color:var(--glow); font-weight:bold;">$${p.price.toLocaleString()}</div>
-                    <button class="btn" style="font-size:11px; padding:8px" onclick="add(${p.id})">AÑADIR</button>
+                    <button class="btn" onclick="add(${p.id})">AÑADIR</button>
                 </div>
             `;
         });
@@ -132,25 +122,18 @@
 
     function runAI() {
         const q = document.getElementById('ai-in').value.toLowerCase();
-        const out = document.getElementById('ai-out');
-        const found = products.filter(p => p.name.toLowerCase().includes(q));
-        render(found);
-        if(q.includes("hola")) out.innerText = "IA: Hola Lucas, ¿qué sensor programaremos hoy?";
-        else out.innerText = `IA: Encontrados ${found.length} componentes.`;
+        render(products.filter(p => p.name.toLowerCase().includes(q)));
     }
 
     function add(id) {
-        const p = products.find(x => x.id === id);
-        if(p.stock > 0) { cart.push(p); updateTotal(); }
-        else alert("ERROR_STOCK: Producto agotado.");
+        cart.push(products.find(x => x.id === id));
+        updateTotal();
     }
 
     function updateTotal() {
         const list = document.getElementById('cart-content');
         list.innerHTML = cart.map(i => `> ${i.name} - $${i.price.toLocaleString()}`).join('<br>');
-        let total = cart.reduce((s, i) => s + i.price, 0);
-        total += parseInt(document.getElementById('ship-calc').value);
-        if(document.getElementById('coupon').value === "LUCAS10") total *= 0.9;
+        let total = cart.reduce((s, i) => s + i.price, 0) + parseInt(document.getElementById('ship-calc').value);
         document.getElementById('total-price').innerText = total.toLocaleString();
     }
 
@@ -167,14 +150,17 @@
             products.push({ id: Date.now(), name: n, price: p, stock: 5, img: i });
             localStorage.setItem('lutec_db', JSON.stringify(products));
             render();
-            alert("SINCRONIZADO: Producto guardado en este navegador.");
+            alert("SINCRONIZADO CORRECTAMENTE.");
         }
     }
 
-    function checkout() {
+    function processInternalOrder() {
         if(cart.length === 0) return;
-        const text = `Hola Lucas, pedido de LUTEC: ${cart.map(i => i.name).join(", ")}. Total: $${document.getElementById('total-price').innerText}`;
-        window.open(`https://wa.me/569XXXXXXXX?text=${encodeURIComponent(text)}`);
+        const total = document.getElementById('total-price').innerText;
+        const details = `ID_ORDEN: ${Math.floor(Math.random()*10000)}\nFECHA: 02/05/2026\nARTICULOS: ${cart.length}\nTOTAL: $${total} CLP\nENVIO: Chilexpress\n\nESTADO: PENDIENTE_PAGO`;
+        document.getElementById('order-details').innerText = details;
+        document.getElementById('order-modal').style.display = 'block';
+        cart = []; updateTotal();
     }
 
     render();
